@@ -2,22 +2,11 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: smaant/lein-flyway:2.7.1-4.0.3
     steps:
-      - checkout
-      - run: echo "A first hello"
-  test:
-    docker:
-      - image: circleci/ruby:2.4.1
-    steps:
-      - checkout
-      - run: echo "A more familiar hi"
-workflows:
-  version: 2
-  build_and_test:
-    jobs:
-      - build
-      - test
-        # only run this job if build succeeds
-          requires:
-            - build 
+      - run:
+          name: PATH の更新および実行時の環境変数の定義
+          command: |
+            echo 'export PATH=/path/to/foo/bin:$PATH' >> $BASH_ENV
+            echo 'export VERY_IMPORTANT=$(cat important_value)' >> $BASH_ENV
+            source $BASH_ENV
