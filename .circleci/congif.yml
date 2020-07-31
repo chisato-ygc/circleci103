@@ -1,20 +1,42 @@
+Concept 3: Setting an environment variable in a shell command
+
 version: 2
 jobs:
   build:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: smaant/lein-flyway:2.7.1-4.0.3
     steps:
-      - checkout
-      - run: echo "A first hello"
-  test:
+      - run:
+          name: Update PATH and Define Environment Variable at Runtime
+          command: |
+            echo 'export PATH=/path/to/foo/bin:$PATH' >> $zsh.env
+            echo 'export VERY_IMPORTANT=$(cat important_value)' >> $zsh.env
+            source $zsh.env
+            
+            
+Concept 3: Setting an environment variable in a step
+
+version: 2
+jobs:
+  build:
     docker:
-      - image: circleci/ruby:2.4.1
+      - image: smaant/lein-flyway:2.7.1-4.0.3
     steps:
       - checkout
-      - run: echo "A more familiar hi"
-workflows:
-  version: 2
-  build_and_test:
-    jobs:
-      - build
-      - test
+      - run:
+          name: Run migrations
+          command: sql/docker-entrypoint.sh sql
+          # Environment variable for a single command shell
+          environment:
+            DATABASE_URL: postgres://conductor:@localhost:5432/conductor_test
+            
+            
+Concept 3: Setting an environment variable in a job
+
+version: 2
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:trusty
+    environment:
+      FOO: bar
